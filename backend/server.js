@@ -114,8 +114,8 @@ app.use("/api/reports", auth, reportRoutes);
 app.use("/api/ai", auth, aiRoutes);
 app.use("/api/alerts", auth, alertRoutes);
 
-// Admin routes - require JWT admin authentication  
-app.use("/api/admin/api-keys", auth, apiKeyRoutes);
+// Admin routes - require JWT super admin authentication  
+app.use("/api/admin/api-keys", superAdminAuth, apiKeyRoutes);
 
 // Super Admin routes - require super admin privileges
 app.use("/api/security", securityRoutes);

@@ -122,9 +122,16 @@ export const ApiKeyManagement: React.FC = () => {
       toast.error('At least one permission is required');
       return;
     }
+    
+    // Validate expiration date format
+    const createData = {
+      ...newKey,
+      expiresAt: newKey.expiresAt ? new Date(newKey.expiresAt).toISOString() : undefined
+    };
+    
     try {
       if (isConfigured && isOnline) {
-        const response = await apiKeyService.createApiKey(newKey);
+        const response = await apiKeyService.createApiKey(createData);
         if (response.success) {
           await loadApiKeys(); // Reload from backend
 

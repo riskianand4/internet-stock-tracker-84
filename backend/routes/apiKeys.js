@@ -96,14 +96,16 @@ router.post('/', superAdminAuth, [
     // Generate new API key
     const newKey = ApiKey.generateKey();
 
-    const apiKey = await ApiKey.create({
+    const apiKeyData = {
       name,
       key: newKey,
       permissions,
       rateLimit: rateLimit || 1000,
       expiresAt: expiresAt ? new Date(expiresAt) : null,
       createdBy: req.user.id
-    });
+    };
+
+    const apiKey = await ApiKey.create(apiKeyData);
 
     await apiKey.populate('createdBy', 'name email');
 

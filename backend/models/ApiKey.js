@@ -81,7 +81,7 @@ apiKeySchema.virtual('isValid').get(function() {
 
 // Pre-save hook to hash the API key
 apiKeySchema.pre('save', function(next) {
-  if (this.isNew && this.key) {
+  if (this.key && (this.isNew || this.isModified('key'))) {
     this.hashedKey = crypto.createHash('sha256').update(this.key).digest('hex');
   }
   next();
