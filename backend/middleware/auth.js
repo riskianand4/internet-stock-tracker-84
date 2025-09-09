@@ -26,7 +26,8 @@ const auth = async (req, res, next) => {
 const adminAuth = async (req, res, next) => {
   try {
     await auth(req, res, () => {
-      if (req.user.role !== 'admin' && req.user.role !== 'super_admin') {
+      // Accept both 'admin', 'super_admin', and 'superadmin' for compatibility
+      if (req.user.role !== 'admin' && req.user.role !== 'super_admin' && req.user.role !== 'superadmin') {
         return res.status(403).json({ error: 'Access denied. Admin privileges required.' });
       }
       next();
@@ -39,7 +40,8 @@ const adminAuth = async (req, res, next) => {
 const superAdminAuth = async (req, res, next) => {
   try {
     await auth(req, res, () => {
-      if (req.user.role !== 'super_admin') {
+      // Accept both 'super_admin' and 'superadmin' for compatibility
+      if (req.user.role !== 'super_admin' && req.user.role !== 'superadmin') {
         return res.status(403).json({ error: 'Access denied. Super admin privileges required.' });
       }
       next();

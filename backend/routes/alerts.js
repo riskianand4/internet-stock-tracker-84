@@ -141,15 +141,25 @@ router.post('/', adminAuth, [
   body('title').isLength({ min: 1, max: 200 }).trim(),
   body('message').isLength({ min: 1, max: 1000 }).trim(),
   body('product').optional().isMongoId(),
+  body('productId').optional().isMongoId(), // Accept both 'product' and 'productId'
   body('category').optional().isIn(['inventory', 'system_health', 'security', 'performance', 'maintenance'])
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.error('Validation errors:', errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const alert = await Alert.create(req.body);
+    // Handle productId vs product field mapping
+    const alertData = { ...req.body };
+    if (alertData.productId && !alertData.product) {
+      alertData.product = alertData.productId;
+      delete alertData.productId;
+    }
+
+    console.log('Creating alert with data:', alertData);
+    const alert = await Alert.create(alertData);
     await alert.populate('product', 'name sku category stock');
 
     res.status(201).json({
@@ -158,6 +168,7 @@ router.post('/', adminAuth, [
       message: 'Alert created successfully'
     });
   } catch (error) {
+    console.error('Error creating alert:', error);
     res.status(500).json({ error: error.message });
   }
 });

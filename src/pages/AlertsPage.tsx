@@ -25,6 +25,7 @@ import OptimizedAutomatedStockAlerts from '@/components/alerts/OptimizedAutomate
 import OptimizedAutoAlertMonitor from '@/components/alerts/OptimizedAutoAlertMonitor';
 import { createStockAlert, acknowledgeStockAlert } from '@/services/stockMovementApi';
 import { InventoryApiService } from '@/services/inventoryApi';
+import { alertApiService } from '@/services/alertApi';
 
 export default function AlertsPage() {
   const { user, isAuthenticated } = useApp();
@@ -144,8 +145,8 @@ export default function AlertsPage() {
   const handleCreateAlert = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check if user is superadmin
-    if (user?.role !== 'superadmin') {
+    // Check if user is superadmin (accept both 'superadmin' and 'super_admin')
+    if (user?.role !== 'superadmin' && user?.role !== 'super_admin') {
       toast({
         title: "Akses Ditolak",
         description: "Hanya superadmin yang dapat membuat custom alert",
@@ -182,10 +183,13 @@ export default function AlertsPage() {
         title: formData.title,
         message: formData.message,
         category: getAlertCategory(formData.type),
-        ...(isStockAlert && { productId: formData.productId })
+        // Send as 'product' field for backend compatibility
+        ...(isStockAlert && { product: formData.productId })
       };
 
-      await createStockAlert(alertData);
+      console.log('Sending alert data:', alertData);
+
+      await alertApiService.createAlert(alertData);
 
       toast({
         title: "Berhasil",
@@ -257,7 +261,7 @@ export default function AlertsPage() {
             <p className="text-muted-foreground text-sm md:text-base">Monitor alert sistem dan konfigurasi notifikasi</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {user?.role === 'superadmin' && (
+            {(user?.role === 'superadmin' || user?.role === 'super_admin') && (
               <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
                 <DialogTrigger asChild>
                   <Button>

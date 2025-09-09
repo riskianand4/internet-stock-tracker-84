@@ -6,8 +6,8 @@ import { AlertCircle } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: 'user' | 'admin' | 'superadmin';
-  allowedRoles?: ('user' | 'admin' | 'superadmin')[];
+  requiredRole?: 'user' | 'admin' | 'superadmin' | 'super_admin';
+  allowedRoles?: ('user' | 'admin' | 'superadmin' | 'super_admin')[];
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
@@ -35,13 +35,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const hasRequiredRole = () => {
     if (!requiredRole && allowedRoles.length === 0) return true;
     
-    // Role hierarchy: superadmin > admin > user
-    const roleHierarchy = { user: 1, admin: 2, superadmin: 3 };
-    const userRoleLevel = roleHierarchy[user.role] || 0;
+    // Role hierarchy: superadmin/super_admin > admin > user
+    const roleHierarchy = { user: 1, admin: 2, superadmin: 3, super_admin: 3 };
+    const userRoleLevel = roleHierarchy[user.role as keyof typeof roleHierarchy] || 0;
     
     // Check specific required role
     if (requiredRole) {
-      const requiredRoleLevel = roleHierarchy[requiredRole];
+      const requiredRoleLevel = roleHierarchy[requiredRole as keyof typeof roleHierarchy];
       return userRoleLevel >= requiredRoleLevel;
     }
     

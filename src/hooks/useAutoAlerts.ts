@@ -78,7 +78,7 @@ export const useAutoAlerts = () => {
         const defaultSettings: AlertSettings = {
           id: `settings-${Date.now()}`,
           userId: user?.id,
-          role: user?.role === 'superadmin' ? 'superadmin' : user?.role || 'user',
+          role: (user?.role === 'superadmin' || user?.role === 'super_admin') ? 'superadmin' : user?.role || 'user',
           thresholds: DEFAULT_THRESHOLDS,
           notifications: {
             email: false,
