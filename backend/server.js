@@ -20,6 +20,9 @@ const externalRoutes = require("./routes/external");
 const errorRoutes = require("./routes/errors");
 const securityRoutes = require("./routes/security");
 const systemConfigRoutes = require("./routes/systemConfig");
+const supplierRoutes = require("./routes/suppliers");
+const customerRoutes = require("./routes/customers");
+const orderRoutes = require("./routes/orders");
 
 const errorHandler = require("./middleware/errorHandler");
 const { connectDB } = require("./config/database");
@@ -113,6 +116,9 @@ app.use("/api/analytics", auth, analyticsRoutes);
 app.use("/api/reports", auth, reportRoutes);
 app.use("/api/ai", auth, aiRoutes);
 app.use("/api/alerts", auth, alertRoutes);
+app.use("/api/suppliers", auth, supplierRoutes);
+app.use("/api/customers", auth, customerRoutes);
+app.use("/api/orders", auth, orderRoutes);
 
 // Admin routes - require JWT super admin authentication  
 app.use("/api/admin/api-keys", superAdminAuth, apiKeyRoutes);
